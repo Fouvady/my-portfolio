@@ -22,9 +22,9 @@
     <style>
         :root {
             /* Purple Gradient Theme */
-            --bg-body: #0f0518; /* Deep Purple Black */
-            --accent: #a855f7; /* Purple */
-            --accent-secondary: #d946ef; /* Pink/Magenta */
+            --bg-body: #0f0518;
+            --accent: #a855f7;
+            --accent-secondary: #d946ef;
             --text-main: #ffffff;
             --container-width: 1100px;
         }
@@ -38,7 +38,7 @@
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            overflow-y: hidden; /* Lock scroll during load */
+            overflow-y: hidden;
             cursor: none;
         }
 
@@ -57,21 +57,15 @@
             background: rgba(255, 255, 255, 0.03); 
             backdrop-filter: blur(25px); 
             -webkit-backdrop-filter: blur(25px);
-            
-            /* --- THE BORDER CODE --- */
             border: 1px solid rgba(168, 85, 247, 0.3); 
             border-radius: 24px; 
-            
-            /* Outer Glow + Inner Glow */
             box-shadow: 
                 0 0 15px rgba(168, 85, 247, 0.15), 
                 inset 0 0 20px rgba(217, 70, 239, 0.05);
-            
             overflow: hidden; 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
 
-        /* Liquid Orb Animation - Contained within card */
         .liquid-glass::before {
             content: '';
             position: absolute;
@@ -90,7 +84,6 @@
             transform: translate(-25%, -25%);
         }
 
-        /* Light Sheen */
         .liquid-glass::after {
             content: '';
             position: absolute;
@@ -106,7 +99,6 @@
             border-radius: 24px;
         }
 
-        /* --- HOVER EFFECT FOR BORDERS --- */
         .liquid-glass:hover {
             border-color: rgba(217, 70, 239, 0.6); 
             box-shadow: 
@@ -120,7 +112,7 @@
             100% { transform: translate(-25%, -25%) rotate(360deg); }
         }
 
-        /* --- CERTIFICATION CARD SPECIFIC STYLES --- */
+        /* --- CERTIFICATION CARD STYLES --- */
         .cert-card {
             position: relative;
             padding: 30px;
@@ -159,7 +151,7 @@
             height: 50px;
             object-fit: contain;
             transition: 0.4s;
-            /* Global filter removed - handled per logo below */
+            /* No global filter - handled per logo below */
         }
 
         .cert-card:hover .cert-logo-wrapper {
@@ -208,7 +200,7 @@
             box-shadow: 0 0 15px var(--accent-secondary);
         }
 
-        /* --- CUSTOM CURSOR STYLES --- */
+        /* --- CUSTOM CURSOR --- */
         .cursor-dot, .cursor-outline {
             position: fixed; top: 0; left: 0;
             transform: translate(-50%, -50%);
@@ -303,40 +295,45 @@
     <script type="text/babel">
         const { motion, AnimatePresence } = window.Motion;
 
-        // --- CERTIFICATIONS DATA WITH CORRECT LOGOS ---
+        // --- CERTIFICATIONS DATA ---
+        // INSTRUCTION: PASTE YOUR LOGO LINKS INSIDE THE QUOTES BELOW.
+        // If the logo is dark, keep the filter: 'brightness(0) invert(1)'.
+        // If the logo is already white/transparent, remove the filter line.
         const certificationsData = [
             {
                 title: "Google Cloud Data Analytics",
                 issuer: "Google Cloud",
                 date: "January 2026",
                 link: "#", 
-                // White Google Cloud Icon
-                logo: "https://www.gstatic.com/devrel-devsite/prod/vdc27853b36c73277f6454139860979b9a0d9f11c741058869e3a6d5f54c0481c/developers/images/lockup.svg"
+                // PASTE GOOGLE LOGO LINK HERE
+                logo: "PASTE_GOOGLE_LOGO_LINK_HERE",
+                style: { filter: 'brightness(0) invert(1)' }
             },
             {
                 title: "JavaScript Essentials",
                 issuer: "Cisco",
                 date: "December 2025",
                 link: "#",
-                // Clean White JS Text Logo
-                logo: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png"
+                // PASTE JS LOGO LINK HERE
+                logo: "PASTE_JS_LOGO_LINK_HERE",
+                style: { filter: 'brightness(0) invert(1)' }
             },
             {
                 title: "Full Stack Web Development",
                 issuer: "Udemy",
                 date: "September 2025",
                 link: "#",
-                // Official Udemy Logo (Black, inverted to white via style)
-                logo: "https://upload.wikimedia.org/wikipedia/commons/9/92/Udemy_logo.svg",
-                style: { filter: 'brightness(0) invert(1)' } // Force White
+                // PASTE UDEMY LOGO LINK HERE
+                logo: "PASTE_UDEMY_LOGO_LINK_HERE",
+                style: { filter: 'brightness(0) invert(1)' }
             },
             {
                 title: "OCI 2025 AI Foundations",
                 issuer: "Oracle",
                 date: "September 2025",
                 link: "#",
-                // Oracle Logo (Red/Blue, inverted for dark mode compatibility)
-                logo: "https://upload.wikimedia.org/wikipedia/commons/0/05/Oracle_Corporation_Logo.svg",
+                // PASTE ORACLE LOGO LINK HERE
+                logo: "PASTE_ORACLE_LOGO_LINK_HERE",
                 style: { filter: 'brightness(0) invert(1)' }
             },
             {
@@ -344,8 +341,8 @@
                 issuer: "PMI",
                 date: "February 2025",
                 link: "#",
-                // PMI Logo (Blue/Black, inverted)
-                logo: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Project_Management_Institute_%28PMI%29_2019_logo.svg",
+                // PASTE PMI LOGO LINK HERE
+                logo: "PASTE_PMI_LOGO_LINK_HERE",
                 style: { filter: 'brightness(0) invert(1)' }
             }
         ];
@@ -475,7 +472,7 @@
             </div>
         );
 
-        // --- CERTIFICATION CARD COMPONENT WITH SPECIFIC LOGO STYLES ---
+        // --- CERTIFICATION CARD COMPONENT ---
         const CertificationCard = ({ cert }) => (
             <motion.div variants={fadeIn} className="liquid-glass cert-card">
                 <div className="cert-logo-wrapper">
@@ -483,7 +480,6 @@
                 </div>
                 <h3 style={{fontSize: '1.1rem', marginBottom: '5px', zIndex: 2, position: 'relative'}}>{cert.title}</h3>
                 
-                {/* Hidden Details that appear on hover */}
                 <div className="cert-details">
                     <p style={{color: '#ccc', fontSize: '0.9rem', marginBottom: '5px'}}>{cert.issuer}</p>
                     <p style={{color: '#999', fontSize: '0.8rem', marginBottom: '15px'}}>{cert.date}</p>
@@ -531,7 +527,7 @@
                     <div className="grid">
                         <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
                         <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
-                        <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
+                        <ProjectCard title="Strategic Alliances" desc="Orchestrated high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
                     </div>
                 </Section>
 
