@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammed Abdur Rahman | Data Analyst</title>
+    
+    <!-- React & DOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <!-- MODERN CLEAN FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Purple Gradient Theme */
+            --bg-body: #0f0518; /* Deep Purple Black */
+            --accent: #a855f7; /* Purple */
+            --accent-secondary: #d946ef; /* Pink/Magenta */
+            --text-main: #ffffff;
+            --container-width: 1100px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            overflow-y: hidden; /* Lock scroll during load */
+            cursor: none;
+        }
+
+        body.loaded { overflow-y: auto; overflow-x: hidden; }
+
+        /* --- GLOBAL TEXT GLOW --- */
+        h1, h2, h3, h4, p, a, .nav-link, .section-label, .tag, .btn-tech, .card h3, .timeline-item h3, .loader-text, .logo {
+            text-shadow: 0px 0px 10px rgba(168, 85, 247, 0.7), 
+                         0px 0px 20px rgba(168, 85, 247, 0.5), 
+                         0px 0px 50px rgba(168, 85, 247, 0.3);
+        }
+
+        /* --- LIQUID GLASS & THEME BORDER CODE --- */
+        .liquid-glass {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            
+            /* --- THE BORDER CODE --- */
+            border: 1px solid rgba(168, 85, 247, 0.3); 
+            border-radius: 24px; 
+            
+            /* Outer Glow + Inner Glow */
+            box-shadow: 
+                0 0 15px rgba(168, 85, 247, 0.15), 
+                inset 0 0 20px rgba(217, 70, 239, 0.05);
+            
+            overflow: hidden; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        /* Liquid Orb Animation - Contained within card */
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 150%; height: 150%;
+            background: radial-gradient(
+                circle at 30% 30%, 
+                rgba(168, 85, 247, 0.15) 0%, 
+                rgba(217, 70, 239, 0.05) 40%, 
+                transparent 70%
+            );
+            animation: liquidMove 8s linear infinite;
+            z-index: 0; 
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-25%, -25%);
+        }
+
+        /* Light Sheen */
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.05) 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        /* --- HOVER EFFECT FOR BORDERS --- */
+        .liquid-glass:hover {
+            border-color: rgba(217, 70, 239, 0.6); 
+            box-shadow: 
+                0 0 30px rgba(217, 70, 239, 0.3), 
+                inset 0 0 30px rgba(217, 70, 239, 0.1);
+        }
+
+        @keyframes liquidMove {
+            0% { transform: translate(-25%, -25%) rotate(0deg); }
+            50% { transform: translate(-15%, -35%) rotate(180deg); }
+            100% { transform: translate(-25%, -25%) rotate(360deg); }
+        }
+
+        /* --- CERTIFICATION CARD SPECIFIC STYLES --- */
+        .cert-card {
+            position: relative;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 280px;
+            justify-content: flex-start; 
+            transition: all 0.4s ease;
+            z-index: 1;
+        }
+
+        .cert-card:hover {
+            z-index: 10;
+            transform: scale(1.03);
+        }
+
+        .cert-logo-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+            position: relative;
+            z-index: 2; 
+        }
+
+        .cert-logo-wrapper img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            transition: 0.4s;
+            /* Global filter removed - handled per logo below */
+        }
+
+        .cert-card:hover .cert-logo-wrapper {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .cert-details {
+            opacity: 0; 
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            transform: translateY(10px);
+            margin-top: 0;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .cert-card:hover .cert-details {
+            opacity: 1;
+            max-height: 150px; 
+            transform: translateY(0);
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .view-cert-btn {
+            display: inline-block;
+            margin-top: 15px; 
+            padding: 10px 25px;
+            background: transparent;
+            color: var(--accent-secondary);
+            border: 1px solid var(--accent-secondary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .view-cert-btn:hover {
+            background: var(--accent-secondary);
+            color: white;
+            box-shadow: 0 0 15px var(--accent-secondary);
+        }
+
+        /* --- CUSTOM CURSOR STYLES --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        body.hovering .cursor-outline { width: 60px; height: 60px; background-color: rgba(168, 85, 247, 0.2); border-color: transparent; }
+        body.hovering .cursor-dot { opacity: 0; }
+
+        /* --- LOADING SCREEN --- */
+        .loader-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000; z-index: 9998;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .id-card-svg { width: 300px; height: 200px; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4)); }
+        .loader-text { margin-top: 30px; font-family: 'Outfit', sans-serif; color: var(--accent); letter-spacing: 2px; font-size: 0.9rem; font-weight: 600; }
+        .progress-bar-container { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 15px; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); width: 0%; box-shadow: 0 0 10px var(--accent); }
+
+        /* --- BACKGROUND --- */
+        .network-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f0518 100%); }
+        canvas { display: block; }
+
+        .content-overlay { position: relative; z-index: 10; min-height: 100vh; padding-top: 1px; }
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+
+        /* --- UI ELEMENTS --- */
+        .section-label { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: 1px; }
+        .section-label::before { content: ''; width: 30px; height: 2px; background: var(--accent); border-radius: 2px;}
+        .section-label::after { content: ''; flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1); }
+
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 30px; margin-bottom: 100px; 
+            background: rgba(15, 5, 24, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 50px; 
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.2rem; color: white; letter-spacing: -0.5px; }
+        .logo span { background: linear-gradient(to right, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-link { color: #a78bfa; text-decoration: none; font-size: 0.95rem; margin-left: 30px; transition: 0.3s; font-weight: 500; }
+        .nav-link:hover { color: white; text-shadow: 0 0 10px white; }
+
+        .hero { padding: 20px 0 120px 0; }
+        .hero h1 { font-size: clamp(3rem, 6vw, 5.5rem); line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, #ffffff 30%, #d8b4fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); }
+        .hero p { font-size: 1.2rem; color: #c4b5fd; max-width: 600px; margin-bottom: 40px; font-weight: 300; }
+
+        .btn-tech {
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            color: white; border: none; padding: 16px 40px;
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem;
+            border-radius: 50px; cursor: none; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s ease; 
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .btn-tech:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 0 40px rgba(217, 70, 239, 0.6); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        
+        .card-icon { background: rgba(168, 85, 247, 0.2); color: var(--accent); padding: 12px; border-radius: 12px; margin-bottom: 20px; display: inline-block; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .card p { color: #e9d5ff; font-size: 0.95rem; margin-bottom: 15px; font-weight: 300; }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag { font-size: 0.8rem; padding: 6px 16px; border: 1px solid rgba(168, 85, 247, 0.3); color: #e9d5ff; background: rgba(168, 85, 247, 0.05); border-radius: 20px; font-family: 'Inter', sans-serif; transition: 0.3s;}
+        .tag:hover { border-color: var(--accent-secondary); background: var(--accent-secondary); color: white; box-shadow: 0 0 15px var(--accent-secondary); }
+
+        .timeline-item { display: flex; gap: 30px; padding: 40px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .timeline-date { min-width: 160px; color: var(--accent-secondary); font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; padding-top: 5px; text-align: right; border-right: 2px solid rgba(168, 85, 247, 0.3); padding-right: 20px; }
+
+        footer { margin-top: 100px; padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: #a78bfa; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { motion, AnimatePresence } = window.Motion;
+
+        // --- CERTIFICATIONS DATA WITH CORRECT LOGOS ---
+        const certificationsData = [
+            {
+                title: "Google Cloud Data Analytics",
+                issuer: "Google Cloud",
+                date: "January 2026",
+                link: "#", 
+                // White Google Cloud Icon
+                logo: "https://www.gstatic.com/devrel-devsite/prod/vdc27853b36c73277f6454139860979b9a0d9f11c741058869e3a6d5f54c0481c/developers/images/lockup.svg"
+            },
+            {
+                title: "JavaScript Essentials",
+                issuer: "Cisco",
+                date: "December 2025",
+                link: "#",
+                // Clean White JS Text Logo
+                logo: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png"
+            },
+            {
+                title: "Full Stack Web Development",
+                issuer: "Udemy",
+                date: "September 2025",
+                link: "#",
+                // Official Udemy Logo (Black, inverted to white via style)
+                logo: "https://upload.wikimedia.org/wikipedia/commons/9/92/Udemy_logo.svg",
+                style: { filter: 'brightness(0) invert(1)' } // Force White
+            },
+            {
+                title: "OCI 2025 AI Foundations",
+                issuer: "Oracle",
+                date: "September 2025",
+                link: "#",
+                // Oracle Logo (Red/Blue, inverted for dark mode compatibility)
+                logo: "https://upload.wikimedia.org/wikipedia/commons/0/05/Oracle_Corporation_Logo.svg",
+                style: { filter: 'brightness(0) invert(1)' }
+            },
+            {
+                title: "Certified Project Management",
+                issuer: "PMI",
+                date: "February 2025",
+                link: "#",
+                // PMI Logo (Blue/Black, inverted)
+                logo: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Project_Management_Institute_%28PMI%29_2019_logo.svg",
+                style: { filter: 'brightness(0) invert(1)' }
+            }
+        ];
+
+        // --- COMBINED SKILLS LIST ---
+        const allSkills = [
+            "Google Cloud Analytics", "Data Analysis", "Project Management (PMI)", "Strategic Planning",
+            "JavaScript", "Full Stack Development", "PHP & MySQL", "Oracle Cloud AI",
+            "Virtual Reality (VR)", "Stakeholder Management", "Event Management",
+            "Strategic Alliances", "SQL", "Python", "Agile Methodology", "Cloud Computing"
+        ];
+
+        // --- LOADER ---
+        const LoadingScreen = ({ onComplete }) => {
+            const [progress, setProgress] = React.useState(0);
+            React.useEffect(() => {
+                const timer = setInterval(() => {
+                    setProgress(old => {
+                        if (old >= 100) { clearInterval(timer); setTimeout(onComplete, 500); return 100; }
+                        return old + 1; 
+                    });
+                }, 20);
+                return () => clearInterval(timer);
+            }, [onComplete]);
+
+            return (
+                <motion.div 
+                    className="loader-container"
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                >
+                    <svg className="id-card-svg" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <motion.rect x="10" y="10" width="280" height="180" rx="15" stroke="#a855f7" strokeWidth="2" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.5, ease: "easeInOut" }} />
+                        <motion.rect x="20" y="20" width="260" height="160" rx="10" stroke="rgba(168, 85, 247, 0.3)" strokeWidth="1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }} />
+                        <motion.circle cx="70" cy="70" r="30" stroke="#a855f7" strokeWidth="2" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} />
+                        <motion.path d="M 40 110 Q 70 130 100 110" stroke="#a855f7" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }} />
+                        {[1, 2, 3].map((i) => (
+                            <motion.line key={i} x1="120" y1={40 + (i*30)} x2="260" y2={40 + (i*30)} stroke="#6b7280" strokeWidth="2" strokeLinecap="round" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.6 }} transition={{ delay: 1 + (i*0.2), duration: 0.5 }} />
+                        ))}
+                        <g transform="translate(250, 160)">
+                            <motion.circle r="18" stroke="#a855f7" strokeWidth="2" fill="#000" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.8, type: "spring", stiffness: 200 }} />
+                            <motion.path d="M-6 0 L-2 4 L 6 -4" stroke="#a855f7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2, duration: 0.4 }} />
+                        </g>
+                    </svg>
+                    <div className="loader-text">
+                        <motion.span animate={{ opacity: [1, 0.5, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>LOADING PORTFOLIO...</motion.span>
+                    </div>
+                    <div className="progress-bar-container"><motion.div className="progress-bar-fill" style={{ width: `${progress}%` }} /></div>
+                </motion.div>
+            );
+        };
+
+        const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+        const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+
+        const Navbar = () => (
+            <nav>
+                <div className="logo">MOHAMMED_<span>RAHMAN</span></div>
+                <div>
+                    <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="nav-link">LinkedIn</a>
+                    <a href="#contact" className="nav-link">Contact</a>
+                </div>
+            </nav>
+        );
+
+        const Hero = () => (
+            <motion.section className="hero" initial="hidden" animate="visible" variants={staggerContainer}>
+                <motion.div variants={fadeIn} className="section-label">CLOUD DATA ANALYST</motion.div>
+                <motion.h1 variants={fadeIn} style={{letterSpacing: '-0.02em'}}>
+                    MOHAMMED<br/>ABDUR RAHMAN
+                </motion.h1>
+                <motion.p variants={fadeIn}>
+                    I leverage data and strategic insights to drive decision-making. Specializing in Cloud Analytics, Alliances, and building modern digital solutions.
+                </motion.p>
+                <motion.div variants={fadeIn}>
+                    <a href="#projects" className="btn-tech">
+                        View My Work <span className="material-icons-round" style={{fontSize: '1.1rem'}}>arrow_forward</span>
+                    </a>
+                </motion.div>
+            </motion.section>
+        );
+
+        const Section = ({ title, children, id }) => (
+            <motion.section id={id} style={{ marginBottom: '100px' }} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={staggerContainer}>
+                <motion.span variants={fadeIn} className="section-label">{title}</motion.span>
+                {children}
+            </motion.section>
+        );
+
+        const Experience = () => (
+            <div className="liquid-glass" style={{padding: '40px'}}>
+                <div className="timeline-item">
+                    <div className="timeline-date">
+                        DEC 2025<br/>
+                        <span style={{color: '#666', fontSize: '0.8rem', fontWeight: '400'}}>PRESENT</span>
+                    </div>
+                    <div>
+                        <h3 style={{fontSize: '1.4rem', color: 'var(--accent)'}}>SPONSORSHIP LIAISON OFFICER</h3>
+                        <p style={{color: 'white', fontWeight: '600', marginBottom: '5px'}}>The International Centre For Strategic Alliances</p>
+                        <p style={{color: '#a78bfa', fontSize: '0.9rem', marginBottom: '15px'}}><span className="material-icons-round" style={{fontSize: '0.9rem', verticalAlign: 'middle'}}>place</span> United Kingdom</p>
+                        <p style={{color: '#e9d5ff', lineHeight: 1.7}}>
+                            Orchestrating high-level strategic partnerships and stakeholder management. Coordinating between international entities to ensure smooth operational execution and fostering key relationships in the UK region.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const Education = () => (
+            <div className="grid" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))'}}>
+                <motion.div variants={fadeIn} className="liquid-glass" style={{padding: '30px'}}>
+                    <span className="material-icons-round card-icon">school</span>
+                    <h3 style={{fontSize: '1.3rem'}}>BCA</h3>
+                    <p style={{color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '5px', fontWeight: '600'}}>INDIAN ACADEMY GROUP OF INSTITUTIONS</p>
+                    <p style={{color: '#a78bfa', fontSize: '0.85rem', marginBottom: '20px'}}>2022 - 2025</p>
+                    <p style={{color: '#e9d5ff', fontSize: '0.95rem'}}>Bachelor of Computer Applications. Focused on software development and data structures.</p>
+                </motion.div>
+                
+                <motion.div variants={fadeIn} className="liquid-glass" style={{padding: '30px'}}>
+                    <span className="material-icons-round card-icon">history_edu</span>
+                    <h3 style={{fontSize: '1.3rem'}}>HIGH SCHOOL</h3>
+                    <p style={{color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '5px', fontWeight: '600'}}>INTERNATIONAL INDIAN SCHOOL, RIYADH</p>
+                    <p style={{color: '#a78bfa', fontSize: '0.85rem', marginBottom: '20px'}}>2020 - 2022</p>
+                    <p style={{color: '#e9d5ff', fontSize: '0.95rem'}}>Science stream with a focus on computer science fundamentals.</p>
+                </motion.div>
+            </div>
+        );
+
+        // --- CERTIFICATION CARD COMPONENT WITH SPECIFIC LOGO STYLES ---
+        const CertificationCard = ({ cert }) => (
+            <motion.div variants={fadeIn} className="liquid-glass cert-card">
+                <div className="cert-logo-wrapper">
+                    <img src={cert.logo} alt={cert.issuer} style={cert.style || {}} />
+                </div>
+                <h3 style={{fontSize: '1.1rem', marginBottom: '5px', zIndex: 2, position: 'relative'}}>{cert.title}</h3>
+                
+                {/* Hidden Details that appear on hover */}
+                <div className="cert-details">
+                    <p style={{color: '#ccc', fontSize: '0.9rem', marginBottom: '5px'}}>{cert.issuer}</p>
+                    <p style={{color: '#999', fontSize: '0.8rem', marginBottom: '15px'}}>{cert.date}</p>
+                    <a href={cert.link} target="_blank" className="view-cert-btn">
+                        View Certificate <span className="material-icons-round" style={{fontSize: '0.8rem', verticalAlign: 'middle'}}>open_in_new</span>
+                    </a>
+                </div>
+            </motion.div>
+        );
+
+        const ProjectCard = ({ title, desc, tags, icon }) => (
+            <motion.div variants={fadeIn} className="liquid-glass" style={{ padding: '30px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                    <span className="material-icons-round card-icon">{icon}</span>
+                    <h3>{title}</h3>
+                    <p>{desc}</p>
+                </div>
+                <div className="tags">{tags.map(tag => <span key={tag} className="tag">{tag}</span>)}</div>
+            </motion.div>
+        );
+
+        const Skills = () => (
+            <div className="grid" style={{gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))'}}>
+                {allSkills.map((skill, i) => (
+                    <motion.div key={i} variants={fadeIn} className="liquid-glass" style={{
+                        padding: '20px', textAlign: 'center',
+                        color: '#e9d5ff', fontFamily: 'Outfit', fontWeight: '600', fontSize: '0.9rem'
+                    }}>
+                        {skill}
+                    </motion.div>
+                ))}
+            </div>
+        );
+
+        const MainPortfolio = () => (
+            <div className="container">
+                <Navbar />
+                <Hero />
+                
+                <Section title="Experience" id="experience">
+                    <Experience />
+                </Section>
+
+                <Section title="Featured Projects" id="projects">
+                    <div className="grid">
+                        <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
+                        <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
+                        <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
+                    </div>
+                </Section>
+
+                <Section title="Education" id="education">
+                    <Education />
+                </Section>
+
+                <Section title="Certifications" id="certifications">
+                    <div className="grid">
+                        {certificationsData.map((cert, index) => (
+                            <CertificationCard key={index} cert={cert} />
+                        ))}
+                    </div>
+                </Section>
+
+                <Section title="Skills" id="skills">
+                    <Skills />
+                </Section>
+
+                <Section title="Contact Me" id="contact">
+                    <div className="liquid-glass" style={{padding: '60px', textAlign: 'center'}}>
+                        <h2 style={{marginBottom: '20px', fontSize: '2.5rem'}}>Let's Connect</h2>
+                        <p style={{color: '#e9d5ff', marginBottom: '30px'}}>I'm open to opportunities in Cloud Data Analysis and Project Management.</p>
+                        <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="btn-tech">
+                            Connect on LinkedIn
+                        </a>
+                    </div>
+                </Section>
+                <footer><p>© 2026 Mohammed Abdur Rahman. All rights reserved.</p></footer>
+            </div>
+        );
+
+        const App = () => {
+            const [loading, setLoading] = React.useState(true);
+            React.useEffect(() => { if(!loading) document.body.classList.add('loaded'); }, [loading]);
+
+            return (
+                <React.Fragment>
+                    <AnimatePresence>{loading && <LoadingScreen onComplete={() => setLoading(false)} />}</AnimatePresence>
+                    {!loading && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+                            <div className="network-bg"><canvas id="network-canvas"></canvas></div>
+                            <div className="content-overlay"><MainPortfolio /></div>
+                        </motion.div>
+                    )}
+                </React.Fragment>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+        // --- PURPLE NETWORK BACKGROUND SCRIPT ---
+        const canvas = document.getElementById('network-canvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                initParticles();
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = '#a855f7'; 
+                    ctx.beginPath(); 
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                const count = Math.min(window.innerWidth / 10, 100); 
+                for (let i = 0; i < count; i++) particles.push(new Particle());
+            }
+
+            function animate() {
+                if(!document.getElementById('network-canvas')) return;
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update(); particles[i].draw();
+                    for (let j = i; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 - dist/1000})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath(); 
+                            ctx.moveTo(particles[i].x, particles[i].y); 
+                            ctx.lineTo(particles[j].x, particles[j].y); 
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            window.addEventListener('resize', resize); resize(); animate();
+        }
+
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+        window.addEventListener("mousemove", function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        const interactables = document.querySelectorAll('a, button, .liquid-glass, .tag');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => { document.body.classList.add('hovering'); });
+            el.addEventListener('mouseleave', () => { document.body.classList.remove('hovering'); });
+        });
+    </script>
+</body>
+</html>
