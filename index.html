@@ -151,7 +151,6 @@
             height: 50px;
             object-fit: contain;
             transition: 0.4s;
-            /* No global filter - handled per logo below */
         }
 
         .cert-card:hover .cert-logo-wrapper {
@@ -296,54 +295,43 @@
         const { motion, AnimatePresence } = window.Motion;
 
         // --- CERTIFICATIONS DATA ---
-        // INSTRUCTION: PASTE YOUR LOGO LINKS INSIDE THE QUOTES BELOW.
-        // If the logo is dark, keep the filter: 'brightness(0) invert(1)'.
-        // If the logo is already white/transparent, remove the filter line.
+        // USING RAW LINKS TO ENSURE IMAGES LOAD CORRECTLY
+        // NO INVERT FILTER SO YOUR WHITE LOGOS STAY WHITE
         const certificationsData = [
             {
                 title: "Google Cloud Data Analytics",
                 issuer: "Google Cloud",
                 date: "January 2026",
                 link: "#", 
-                // PASTE GOOGLE LOGO LINK HERE
-                logo: "https://github.com/Fouvady/my-portfolio/blob/main/google%20cloud%20Background%20Removed.png",
-                style: { filter: 'brightness(0) invert(1)' }
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/google%20cloud%20Background%20Removed.png"
             },
             {
                 title: "JavaScript Essentials",
                 issuer: "Cisco",
                 date: "December 2025",
                 link: "#",
-                // PASTE JS LOGO LINK HERE
-                logo: "https://github.com/Fouvady/my-portfolio/blob/main/150-1504620_javascript-logo%20Background%20Removed.png",
-                style: { filter: 'brightness(0) invert(1)' }
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/150-1504620_javascript-logo%20Background%20Removed.png"
             },
             {
                 title: "Full Stack Web Development",
                 issuer: "Udemy",
                 date: "September 2025",
                 link: "#",
-                // PASTE UDEMY LOGO LINK HERE
-                logo: "https://github.com/Fouvady/my-portfolio/blob/main/udemy%20logo.png",
-                style: { filter: 'brightness(0) invert(1)' }
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/udemy%20logo.png"
             },
             {
                 title: "OCI 2025 AI Foundations",
                 issuer: "Oracle",
                 date: "September 2025",
                 link: "#",
-                // PASTE ORACLE LOGO LINK HERE
-                logo: "https://github.com/Fouvady/my-portfolio/blob/main/oracle%20logo%20Background%20Removed.png",
-                style: { filter: 'brightness(0) invert(1)' }
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/oracle%20logo%20Background%20Removed.png"
             },
             {
                 title: "Certified Project Management",
                 issuer: "PMI",
                 date: "February 2025",
                 link: "#",
-                // PASTE PMI LOGO LINK HERE
-                logo: "https://github.com/Fouvady/my-portfolio/blob/main/png-transparent-pmi-hd-logo%20Background%20Removed.png",
-                style: { filter: 'brightness(0) invert(1)' }
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/png-transparent-pmi-hd-logo%20Background%20Removed.png"
             }
         ];
 
@@ -476,7 +464,7 @@
         const CertificationCard = ({ cert }) => (
             <motion.div variants={fadeIn} className="liquid-glass cert-card">
                 <div className="cert-logo-wrapper">
-                    <img src={cert.logo} alt={cert.issuer} style={cert.style || {}} />
+                    <img src={cert.logo} alt={cert.issuer} />
                 </div>
                 <h3 style={{fontSize: '1.1rem', marginBottom: '5px', zIndex: 2, position: 'relative'}}>{cert.title}</h3>
                 
@@ -527,7 +515,7 @@
                     <div className="grid">
                         <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
                         <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
-                        <ProjectCard title="Strategic Alliances" desc="Orchestrated high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
+                        <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
                     </div>
                 </Section>
 
