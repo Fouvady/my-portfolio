@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification</title>
+    
+    <!-- React & Motion -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <style>
+        /* --- EXACT THEME MATCH --- */
+        :root {
+            --bg-body: #0f0518;
+            --accent: #a855f7;
+            --accent-secondary: #d946ef;
+            --text-main: #ffffff;
+            --container-width: 1100px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            cursor: none; /* Custom Cursor */
+        }
+
+        /* --- LIQUID GLASS & THEME BORDER (SAME AS MAIN) --- */
+        .liquid-glass {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(168, 85, 247, 0.3); 
+            border-radius: 24px; 
+            box-shadow: 
+                0 0 15px rgba(168, 85, 247, 0.15), 
+                inset 0 0 20px rgba(217, 70, 239, 0.05);
+            overflow: hidden; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            padding: 40px; /* Padding to give it card size */
+            display: inline-block;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 150%; height: 150%;
+            background: radial-gradient(
+                circle at 30% 30%, 
+                rgba(168, 85, 247, 0.15) 0%, 
+                rgba(217, 70, 239, 0.05) 40%, 
+                transparent 70%
+            );
+            animation: liquidMove 8s linear infinite;
+            z-index: 0; 
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-25%, -25%);
+        }
+
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.05) 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        @keyframes liquidMove {
+            0% { transform: translate(-25%, -25%) rotate(0deg); }
+            50% { transform: translate(-15%, -35%) rotate(180deg); }
+            100% { transform: translate(-25%, -25%) rotate(360deg); }
+        }
+
+        /* --- GLOWY MOVING EDGE EFFECT --- */
+        .card-container {
+            position: relative;
+            display: inline-block;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .card-border {
+            position: relative;
+            z-index: 1;
+            padding: 10px; /* Space for the glow */
+            border-radius: 16px;
+            background: #0f0518;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* The spinning light ring behind the card */
+        .card-border::before {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400%;
+            z-index: -1;
+            animation: spin 2s linear infinite;
+            filter: blur(5px); /* Soft glow */
+        }
+
+        .cert-image {
+            display: block;
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @keyframes spin { 100% { background-position: 0% 50%; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- BACKGROUND --- */
+        .network-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f0518 100%); }
+        canvas { display: block; }
+        .content-overlay { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* --- UI ELEMENTS --- */
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 20;
+        }
+        .back-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
+
+        h1 { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: clamp(2rem, 5vw, 3rem); 
+            text-align: center; 
+            color: white;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
+            margin-bottom: 30px; 
+            z-index: 20;
+        }
+
+        .error-msg { 
+            text-align: center; 
+            color: var(--accent-secondary); 
+            font-family: 'Inter', sans-serif;
+            z-index: 20;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="network-bg"><canvas id="network-canvas"></canvas></div>
+    <div class="content-overlay">
+        
+        <a href="index.html" class="back-btn">
+            <span className="material-icons-round" style={{fontSize: '1.2rem'}}>arrow_back</span> Back to Portfolio
+        </a>
+
+        <div id="root"></div>
+
+    </div>
+
+    <script type="text/babel">
+        const { motion } = window.Motion;
+
+        // --- YOUR LOGO LINKS ---
+        const certs = {
+            'google': "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/google%20cloud%20Background%20Removed.png",
+            'js': "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/150-1504620_javascript-logo%20Background%20Removed.png",
+            'udemy': "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/udemy%20logo.png",
+            'oracle': "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/oracle%20logo%20Background%20Removed.png",
+            'pmi': "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/png-transparent-pmi-hd-logo%20Background%20Removed.png"
+        };
+
+        const CertificateViewer = () => {
+            const params = new URLSearchParams(window.location.search);
+            const certId = params.get('cert');
+            const certImage = certs[certId];
+
+            if (!certImage) {
+                return (
+                    <div className="error-msg">
+                        <h1>CERTIFICATE NOT FOUND</h1>
+                        <p>Please ensure the link is correct.</p>
+                    </div>
+                );
+            }
+
+            return (
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <h1>CERTIFICATE VERIFIED</h1>
+                    
+                    <div className="card-container">
+                        <div className="card-border">
+                            <img src={certImage} alt="Certificate" className="cert-image" />
+                        </div>
+                    </div>
+                </motion.div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CertificateViewer />);
+
+        // --- BACKGROUND SCRIPT (Same as Main Portfolio) ---
+        const canvas = document.getElementById('network-canvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                initParticles();
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = '#a855f7'; 
+                    ctx.beginPath(); 
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                const count = Math.min(window.innerWidth / 10, 100); 
+                for (let i = 0; i < count; i++) particles.push(new Particle());
+            }
+
+            function animate() {
+                if(!document.getElementById('network-canvas')) return;
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update(); particles[i].draw();
+                    for (let j = i; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 - dist/1000})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath(); 
+                            ctx.moveTo(particles[i].x, particles[i].y); 
+                            ctx.lineTo(particles[j].x, particles[j].y); 
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            window.addEventListener('resize', resize); resize(); animate();
+        }
+
+        // --- CUSTOM CURSOR (Same as Portfolio) ---
+        const cursorDot = document.createElement('div');
+        const cursorOutline = document.createElement('div');
+        cursorDot.className = 'cursor-dot'; cursorOutline.className = 'cursor-outline';
+        document.body.appendChild(cursorDot); document.body.appendChild(cursorOutline);
+        window.addEventListener("mousemove", function (e) {
+            cursorDot.style.left = e.clientX + 'px'; cursorDot.style.top = e.clientY + 'px';
+            cursorOutline.animate({ left: e.clientX + 'px', top: e.clientY + 'px' }, { duration: 500, fill: "forwards" });
+        });
+    </script>
+</body>
+</html>
