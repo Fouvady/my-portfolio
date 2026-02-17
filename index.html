@@ -191,12 +191,79 @@
             transition: 0.3s;
             font-weight: 600;
             z-index: 2;
+            cursor: none;
         }
 
         .view-cert-btn:hover {
             background: var(--accent-secondary);
             color: white;
             box-shadow: 0 0 15px var(--accent-secondary);
+        }
+
+        /* --- CERTIFICATE MODAL (NEW) --- */
+        .cert-modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 5, 24, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .cert-modal-content {
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* THE GRADIENT PURPLE EDGE YOU REQUESTED */
+        .cert-image-wrapper {
+            position: relative;
+            padding: 10px; /* Space for the gradient */
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 20px;
+            box-shadow: 
+                0 0 30px rgba(168, 85, 247, 0.6),
+                0 0 60px rgba(168, 85, 247, 0.3);
+        }
+        
+        .cert-image-wrapper img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            background: #000; /* Dark bg for contrast */
+            border-radius: 12px;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--accent-secondary);
+            text-shadow: 0 0 10px var(--accent-secondary);
         }
 
         /* --- CUSTOM CURSOR --- */
@@ -295,43 +362,48 @@
         const { motion, AnimatePresence } = window.Motion;
 
         // --- CERTIFICATIONS DATA ---
-        // USING RAW LINKS TO ENSURE IMAGES LOAD CORRECTLY
-        // NO INVERT FILTER SO YOUR WHITE LOGOS STAY WHITE
+        // Added 'certImage' field. Currently using placeholder links (same as logos).
+        // REPLACE 'certImage' LINKS WITH YOUR ACTUAL CERTIFICATE IMAGE LINKS WHEN READY.
         const certificationsData = [
             {
                 title: "Google Cloud Data Analytics",
                 issuer: "Google Cloud",
                 date: "January 2026",
                 link: "#", 
-                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/google%20cloud%20Background%20Removed.png"
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/google%20cloud%20Background%20Removed.png",
+                certImage: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/google%20cloud%20Background%20Removed.png" // REPLACE THIS
             },
             {
                 title: "JavaScript Essentials",
                 issuer: "Cisco",
                 date: "December 2025",
                 link: "#",
-                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/150-1504620_javascript-logo%20Background%20Removed.png"
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/150-1504620_javascript-logo%20Background%20Removed.png",
+                certImage: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/150-1504620_javascript-logo%20Background%20Removed.png" // REPLACE THIS
             },
             {
                 title: "Full Stack Web Development",
                 issuer: "Udemy",
                 date: "September 2025",
                 link: "#",
-                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/udemy%20logo.png"
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/udemy%20logo.png",
+                certImage: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/udemy%20logo.png" // REPLACE THIS
             },
             {
                 title: "OCI 2025 AI Foundations",
                 issuer: "Oracle",
                 date: "September 2025",
                 link: "#",
-                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/oracle%20logo%20Background%20Removed.png"
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/oracle%20logo%20Background%20Removed.png",
+                certImage: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/oracle%20logo%20Background%20Removed.png" // REPLACE THIS
             },
             {
                 title: "Certified Project Management",
                 issuer: "PMI",
                 date: "February 2025",
                 link: "#",
-                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/png-transparent-pmi-hd-logo%20Background%20Removed.png"
+                logo: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/png-transparent-pmi-hd-logo%20Background%20Removed.png",
+                certImage: "https://raw.githubusercontent.com/Fouvady/my-portfolio/main/png-transparent-pmi-hd-logo%20Background%20Removed.png" // REPLACE THIS
             }
         ];
 
@@ -342,6 +414,37 @@
             "Virtual Reality (VR)", "Stakeholder Management", "Event Management",
             "Strategic Alliances", "SQL", "Python", "Agile Methodology", "Cloud Computing"
         ];
+
+        // --- CERTIFICATE MODAL COMPONENT ---
+        const CertificateModal = ({ cert, onClose }) => {
+            return (
+                <motion.div 
+                    className="cert-modal-backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={onClose}
+                >
+                    <motion.div 
+                        className="cert-modal-content"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
+                    >
+                        <button className="close-modal-btn" onClick={onClose}>
+                            <span className="material-icons-round">close</span> Close
+                        </button>
+                        
+                        {/* THE GRADIENT PURPLE EDGE CONTAINER */}
+                        <div className="cert-image-wrapper">
+                            <img src={cert.certImage} alt={cert.title} />
+                        </div>
+                    </motion.div>
+                </motion.div>
+            );
+        };
 
         // --- LOADER ---
         const LoadingScreen = ({ onComplete }) => {
@@ -460,8 +563,8 @@
             </div>
         );
 
-        // --- CERTIFICATION CARD COMPONENT ---
-        const CertificationCard = ({ cert }) => (
+        // --- CERTIFICATION CARD COMPONENT (UPDATED) ---
+        const CertificationCard = ({ cert, onClick }) => (
             <motion.div variants={fadeIn} className="liquid-glass cert-card">
                 <div className="cert-logo-wrapper">
                     <img src={cert.logo} alt={cert.issuer} />
@@ -471,7 +574,8 @@
                 <div className="cert-details">
                     <p style={{color: '#ccc', fontSize: '0.9rem', marginBottom: '5px'}}>{cert.issuer}</p>
                     <p style={{color: '#999', fontSize: '0.8rem', marginBottom: '15px'}}>{cert.date}</p>
-                    <a href={cert.link} target="_blank" className="view-cert-btn">
+                    {/* Updated onClick handler */}
+                    <a href="#" onClick={(e) => { e.preventDefault(); onClick(cert); }} className="view-cert-btn">
                         View Certificate <span className="material-icons-round" style={{fontSize: '0.8rem', verticalAlign: 'middle'}}>open_in_new</span>
                     </a>
                 </div>
@@ -502,51 +606,70 @@
             </div>
         );
 
-        const MainPortfolio = () => (
-            <div className="container">
-                <Navbar />
-                <Hero />
-                
-                <Section title="Experience" id="experience">
-                    <Experience />
-                </Section>
+        const MainPortfolio = () => {
+            // State for the certificate modal
+            const [activeCert, setActiveCert] = React.useState(null);
 
-                <Section title="Featured Projects" id="projects">
-                    <div className="grid">
-                        <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
-                        <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
-                        <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
-                    </div>
-                </Section>
+            return (
+                <div className="container">
+                    {/* CERTIFICATE MODAL OVERLAY */}
+                    <AnimatePresence>
+                        {activeCert && (
+                            <CertificateModal 
+                                cert={activeCert} 
+                                onClose={() => setActiveCert(null)} 
+                            />
+                        )}
+                    </AnimatePresence>
 
-                <Section title="Education" id="education">
-                    <Education />
-                </Section>
+                    <Navbar />
+                    <Hero />
+                    
+                    <Section title="Experience" id="experience">
+                        <Experience />
+                    </Section>
 
-                <Section title="Certifications" id="certifications">
-                    <div className="grid">
-                        {certificationsData.map((cert, index) => (
-                            <CertificationCard key={index} cert={cert} />
-                        ))}
-                    </div>
-                </Section>
+                    <Section title="Featured Projects" id="projects">
+                        <div className="grid">
+                            <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
+                            <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
+                            <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
+                        </div>
+                    </Section>
 
-                <Section title="Skills" id="skills">
-                    <Skills />
-                </Section>
+                    <Section title="Education" id="education">
+                        <Education />
+                    </Section>
 
-                <Section title="Contact Me" id="contact">
-                    <div className="liquid-glass" style={{padding: '60px', textAlign: 'center'}}>
-                        <h2 style={{marginBottom: '20px', fontSize: '2.5rem'}}>Let's Connect</h2>
-                        <p style={{color: '#e9d5ff', marginBottom: '30px'}}>I'm open to opportunities in Cloud Data Analysis and Project Management.</p>
-                        <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="btn-tech">
-                            Connect on LinkedIn
-                        </a>
-                    </div>
-                </Section>
-                <footer><p>© 2026 Mohammed Abdur Rahman. All rights reserved.</p></footer>
-            </div>
-        );
+                    <Section title="Certifications" id="certifications">
+                        <div className="grid">
+                            {certificationsData.map((cert, index) => (
+                                <CertificationCard 
+                                    key={index} 
+                                    cert={cert} 
+                                    onClick={setActiveCert} 
+                                />
+                            ))}
+                        </div>
+                    </Section>
+
+                    <Section title="Skills" id="skills">
+                        <Skills />
+                    </Section>
+
+                    <Section title="Contact Me" id="contact">
+                        <div className="liquid-glass" style={{padding: '60px', textAlign: 'center'}}>
+                            <h2 style={{marginBottom: '20px', fontSize: '2.5rem'}}>Let's Connect</h2>
+                            <p style={{color: '#e9d5ff', marginBottom: '30px'}}>I'm open to opportunities in Cloud Data Analysis and Project Management.</p>
+                            <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="btn-tech">
+                                Connect on LinkedIn
+                            </a>
+                        </div>
+                    </Section>
+                    <footer><p>© 2026 Mohammed Abdur Rahman. All rights reserved.</p></footer>
+                </div>
+            );
+        };
 
         const App = () => {
             const [loading, setLoading] = React.useState(true);
@@ -648,11 +771,22 @@
             }, { duration: 500, fill: "forwards" });
         });
 
-        const interactables = document.querySelectorAll('a, button, .liquid-glass, .tag');
+        // Add modal elements to interactables list for cursor effect
+        const interactables = document.querySelectorAll('a, button, .liquid-glass, .tag, .cert-modal-content');
         interactables.forEach(el => {
             el.addEventListener('mouseenter', () => { document.body.classList.add('hovering'); });
             el.addEventListener('mouseleave', () => { document.body.classList.remove('hovering'); });
         });
+        
+        // Re-run interactables listener after React mounts to catch dynamic elements
+        setTimeout(() => {
+             const dynamicInteractables = document.querySelectorAll('.view-cert-btn, .close-modal-btn');
+             dynamicInteractables.forEach(el => {
+                el.addEventListener('mouseenter', () => { document.body.classList.add('hovering'); });
+                el.addEventListener('mouseleave', () => { document.body.classList.remove('hovering'); });
+            });
+        }, 3000);
+
     </script>
 </body>
 </html>
