@@ -52,12 +52,49 @@
                          0px 0px 50px rgba(168, 85, 247, 0.3);
         }
 
+        /* --- LIQUID WALLPAPER SIMULATION --- */
+        .network-bg { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
+            background-image: url('https://raw.githubusercontent.com/Fouvady/my-portfolio/main/portofolio.jpg');
+            background-size: cover;
+            background-position: center;
+            /* "LIQUID BREATHING": Slowly zooms in/out to create pressure effect */
+            animation: liquidBreath 15s infinite alternate ease-in-out;
+        }
+
+        /* Vignette: Darkens edges so lightning pops */
+        .network-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, transparent 80%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Noise: Makes static image look "alive" */
+        .network-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='1'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComposite operator='in' in='SourceGraphic' in2='noise' result='monoNoise'/%3E%3CfeComposite operator='in' in='monoNoise' in2='SourceGraphic' result='coloredNoise'/%3E%3CfeBlendMode mode='screen' in='coloredNoise' in2='SourceGraphic'/%3E%3C/feFilter%3E%3C/svg%3E");
+            opacity: 0.07;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes liquidBreath {
+            0% { transform: scale(1); filter: hue-rotate(0deg) brightness(1); }
+            25% { transform: scale(1.05); filter: hue-rotate(5deg) brightness(1.05); }
+            50% { transform: scale(1); filter: hue-rotate(0deg) brightness(1); }
+            75% { transform: scale(1.05); filter: hue-rotate(-5deg) brightness(0.95); }
+            100% { transform: scale(1); filter: hue-rotate(0deg) brightness(1); }
+        }
+
         /* --- IPHONE 17 PRO MAX LIQUID GLASS UI --- */
         .liquid-glass {
             position: relative;
-            /* High transparency for better glass effect */
             background: rgba(255, 255, 255, 0.05); 
-            /* Saturate creates the vivid Apple-like look */
             backdrop-filter: blur(20px) saturate(180%); 
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.15); 
@@ -67,13 +104,11 @@
                 inset 0 0 0px rgba(255, 255, 255, 0.1);
             overflow: hidden; 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            /* Added Aurora background */
             background-image: linear-gradient(120deg, transparent, rgba(168, 85, 247, 0.2), transparent);
             background-size: 200% 200%;
             animation: liquidAurora 8s linear infinite;
         }
 
-        /* The liquid blob moving inside */
         .liquid-glass::before {
             content: '';
             position: absolute;
@@ -90,7 +125,6 @@
             mix-blend-mode: screen;
         }
 
-        /* Shiny Border Animation */
         .liquid-glass::after {
             content: '';
             position: absolute;
@@ -193,7 +227,6 @@
         /* --- CERTIFICATE VIEWER PAGE --- */
         .cert-page-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            /* Darker gradient for Cert Viewer to ensure text readability */
             background: radial-gradient(circle at 50% 50%, #1a0a20 0%, #05020a 100%);
             z-index: 2000;
             display: flex; flex-direction: column;
@@ -238,7 +271,6 @@
             transform-style: preserve-3d;
         }
 
-        /* The glow behind the image */
         .cert-card-wrapper::before {
             content: "";
             position: absolute;
@@ -255,7 +287,6 @@
             transition: background 0.1s;
         }
 
-        /* Subtle gradient border */
         .cert-card-wrapper::after {
             content: '';
             position: absolute;
@@ -302,23 +333,15 @@
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); width: 0%; box-shadow: 0 0 10px var(--accent); }
 
         /* --- BACKGROUND & LIGHTNING CANVAS --- */
-        .network-bg { 
+        /* Canvas is separate layer on top */
+        #lightning-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-            /* YOUR IMAGE BACKGROUND HERE */
-            background-image: url('https://raw.githubusercontent.com/Fouvady/my-portfolio/main/portofolio.jpg');
-            background-size: cover;
-            background-position: center;
+            pointer-events: none;
+            /* Use 'lighten' or 'overlay' blend mode to make lightning glowy but not wash out bg */
+            mix-blend-mode: screen; 
         }
 
         canvas { display: block; }
-
-        /* The Overlay Canvas for Lightning (Separate from background image) */
-        #lightning-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-            pointer-events: none;
-            /* Blend mode makes lightning look like it's glowing on top of the wallpaper */
-            mix-blend-mode: screen; 
-        }
 
         .content-overlay { position: relative; z-index: 10; min-height: 100vh; padding-top: 1px; }
         .container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
@@ -392,10 +415,10 @@
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
     
-    <!-- Background Image Container -->
+    <!-- BACKGROUND LAYER (YOUR IMAGE + CSS ANIMATION) -->
     <div class="network-bg"></div>
     
-    <!-- Lightning Overlay Canvas -->
+    <!-- LIGHTNING LAYER (CANVAS ANIMATION) -->
     <canvas id="lightning-canvas"></canvas>
     
     <div id="root"></div>
@@ -453,6 +476,103 @@
             "Virtual Reality (VR)", "Stakeholder Management", "Event Management",
             "Strategic Alliances", "SQL", "Python", "Agile Methodology", "Cloud Computing"
         ];
+
+        // --- LIGHTNING ENGINE (INSIDE APP COMPONENT TO ENSURE IT RUNS) ---
+        const LightningEngine = () => {
+            React.useEffect(() => {
+                const canvas = document.getElementById('lightning-canvas');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let width, height;
+
+                const resize = () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                };
+
+                // Bolts Array
+                let bolts = [];
+                const maxBolts = 15; 
+
+                const animate = () => {
+                    if(!document.getElementById('lightning-canvas')) return;
+
+                    // Clear screen
+                    ctx.clearRect(0, 0, width, height);
+
+                    // Draw Edges of Screen (Pulsing Circles)
+                    const cx = width / 2;
+                    const cy = height / 2;
+                    const time = Date.now() / 1000;
+                    const radius = Math.max(width, height) * 0.85;
+                    
+                    // Outer Purple Circle
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(168, 85, 247, 0.2)';
+                    ctx.lineWidth = 2;
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Inner Pink/Purple Circle
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(217, 70, 239, 0.15)';
+                    ctx.lineWidth = 2;
+                    ctx.arc(cx, cy, radius * 0.7, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Spawn Continuous Bolts (Always active to feel "live")
+                    if (bolts.length < maxBolts && Math.random() > 0.8) {
+                        bolts.push({
+                            x: Math.random() * width,
+                            y: Math.random() * height,
+                            vx: (Math.random() - 0.5) * 4, // Fast movement
+                            vy: (Math.random() - 0.5) * 4,
+                            life: 1.0,
+                            width: Math.random() * 150 + 50,
+                            color: Math.random() > 0.5 ? '#a855f7' : '#d946ef'
+                        });
+                    }
+
+                    // Render Bolts
+                    for (let i = bolts.length - 1; i >= 0; i--) {
+                        const b = bolts[i];
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(b.x, b.y);
+                        // Jagged Line
+                        ctx.lineTo(b.x + b.vx, b.y + b.vy);
+                        
+                        ctx.strokeStyle = b.color;
+                        ctx.globalAlpha = b.life;
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        // Add Massive Glow for "Lightning" effect
+                        ctx.shadowBlur = 20;
+                        ctx.shadowColor = b.color;
+
+                        // Update Bolt
+                        b.x += b.vx;
+                        b.y += b.vy;
+                        b.life -= 0.02; // Fade out speed
+                        
+                        if (b.life <= 0) {
+                            bolts.splice(i, 1);
+                        }
+                    }
+                    ctx.shadowBlur = 0; // Reset shadow
+
+                    requestAnimationFrame(animate);
+                }
+
+                window.addEventListener('resize', resize); resize(); animate();
+
+                return () => {
+                    window.removeEventListener('resize', resize);
+                };
+            }, []);
+            return null; 
+        };
 
         // --- CERTIFICATE VIEWER ---
         const CertificateViewer = ({ cert, onBack }) => {
@@ -867,97 +987,16 @@
                             </motion.div>
                         </React.Fragment>
                     )}
+                    
+                    {/* ENGINE MUST BE INSIDE APP TO RUN */}
+                    <LightningEngine />
+                    
                 </React.Fragment>
             );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
-
-        // --- LIGHTNING ENGINE (120 FPS Optimized) ---
-        const initLightning = () => {
-            const canvas = document.getElementById('lightning-canvas');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width, height;
-
-            const resize = () => {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            }
-
-            // Lightning Bolts Array
-            let bolts = [];
-            const maxBolts = 12;
-
-            const animate = () => {
-                if(!document.getElementById('lightning-canvas')) return;
-                
-                // Clear previous frame
-                ctx.clearRect(0, 0, width, height);
-
-                // 1. Spawn Random Bolt
-                if (bolts.length < maxBolts && Math.random() > 0.96) {
-                    bolts.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        life: 1.0,
-                        width: Math.random() * 200 + 100,
-                        color: Math.random() > 0.5 ? '#a855f7' : '#d946ef' // Purple or Pink
-                    });
-                }
-
-                // 2. Draw Edges of Screen (Static glowy lines)
-                const cx = width / 2;
-                const cy = height / 2;
-                const radius = Math.max(width, height) * 0.8;
-                
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = 'rgba(168, 85, 247, 0.15)';
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = 'rgba(217, 70, 239, 0.1)';
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius * 0.8, 0, Math.PI * 2);
-                ctx.stroke();
-
-                // 3. Render Bolts
-                for (let i = bolts.length - 1; i >= 0; i--) {
-                    const b = bolts[i];
-                    
-                    // Jagged Line
-                    ctx.beginPath();
-                    ctx.moveTo(b.x, b.y);
-                    ctx.lineTo(b.x + (Math.random()-0.5)*50, b.y + (Math.random()-0.5)*50);
-                    
-                    ctx.strokeStyle = b.color;
-                    ctx.globalAlpha = b.life;
-                    ctx.lineWidth = 1.5;
-                    ctx.stroke();
-
-                    // Glow
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = b.color;
-
-                    // Update
-                    b.life -= 0.015; // Fast fade out (High FPS feel)
-                    
-                    if (b.life <= 0) {
-                        bolts.splice(i, 1);
-                    }
-                }
-                ctx.shadowBlur = 0;
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', resize); resize(); animate();
-        };
-
-        // Start Animation
-        setTimeout(initLightning, 100);
 
         // --- CUSTOM CURSOR LOGIC ---
         const cursorDot = document.querySelector('[data-cursor-dot]');
