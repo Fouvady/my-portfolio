@@ -43,6 +43,9 @@
         }
 
         body.loaded { overflow-y: auto; overflow-x: hidden; }
+        
+        /* Lock body when viewing certificate to prevent scrolling background */
+        body.viewing-cert { overflow: hidden; }
 
         /* --- GLOBAL TEXT GLOW --- */
         h1, h2, h3, h4, p, a, .nav-link, .section-label, .tag, .btn-tech, .card h3, .timeline-item h3, .loader-text, .logo {
@@ -51,7 +54,7 @@
                          0px 0px 50px rgba(168, 85, 247, 0.3);
         }
 
-        /* --- LIQUID GLASS & THEME BORDER CODE --- */
+        /* --- LIQUID GLASS --- */
         .liquid-glass {
             position: relative;
             background: rgba(255, 255, 255, 0.03); 
@@ -78,8 +81,7 @@
                 transparent 70%
             );
             animation: liquidMove 8s linear infinite;
-            z-index: 0; 
-            pointer-events: none;
+            z-index: 0; pointer-events: none;
             border-radius: 50%;
             transform: translate(-25%, -25%);
         }
@@ -88,22 +90,9 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                135deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                transparent 50%, 
-                rgba(255, 255, 255, 0.05) 100%
-            );
-            z-index: 1;
-            pointer-events: none;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+            z-index: 1; pointer-events: none;
             border-radius: 24px;
-        }
-
-        .liquid-glass:hover {
-            border-color: rgba(217, 70, 239, 0.6); 
-            box-shadow: 
-                0 0 30px rgba(217, 70, 239, 0.3), 
-                inset 0 0 30px rgba(217, 70, 239, 0.1);
         }
 
         @keyframes liquidMove {
@@ -126,61 +115,38 @@
             z-index: 1;
         }
 
-        .cert-card:hover {
-            z-index: 10;
-            transform: scale(1.03);
-        }
+        .cert-card:hover { z-index: 10; transform: scale(1.03); }
 
         .cert-logo-wrapper {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.05); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             margin-bottom: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: 0.4s;
-            position: relative;
-            z-index: 2; 
+            position: relative; z-index: 2; 
         }
 
-        .cert-logo-wrapper img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            transition: 0.4s;
-        }
-
-        .cert-card:hover .cert-logo-wrapper {
-            background: var(--accent);
-            transform: scale(1.1);
-        }
+        .cert-logo-wrapper img { width: 50px; height: 50px; object-fit: contain; transition: 0.4s; }
+        .cert-card:hover .cert-logo-wrapper { background: var(--accent); transform: scale(1.1); }
 
         .cert-details {
-            opacity: 0; 
-            max-height: 0;
-            overflow: hidden;
+            opacity: 0; max-height: 0; overflow: hidden;
             transition: all 0.4s ease;
             transform: translateY(10px);
-            margin-top: 0;
-            width: 100%;
-            z-index: 2;
+            margin-top: 0; width: 100%; z-index: 2;
         }
 
         .cert-card:hover .cert-details {
-            opacity: 1;
-            max-height: 150px; 
-            transform: translateY(0);
+            opacity: 1; max-height: 150px; transform: translateY(0);
             margin-top: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 15px;
         }
 
         .view-cert-btn {
-            display: inline-block;
-            margin-top: 15px; 
+            display: inline-block; margin-top: 15px; 
             padding: 10px 25px;
             background: transparent;
             color: var(--accent-secondary);
@@ -200,89 +166,66 @@
             box-shadow: 0 0 15px var(--accent-secondary);
         }
 
-        /* --- CERTIFICATE MODAL (NEW) --- */
-        .cert-modal-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 5, 24, 0.9);
-            backdrop-filter: blur(15px);
+        /* --- CERTIFICATE VIEWER PAGE --- */
+        .cert-page-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f0518 100%);
             z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column;
             padding: 20px;
         }
 
-        .cert-modal-content {
-            position: relative;
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .cert-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px;
+            background: rgba(15, 5, 24, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            margin-bottom: 30px;
         }
 
-        /* THE GRADIENT PURPLE EDGE YOU REQUESTED */
-        .cert-image-wrapper {
+        .back-btn {
+            display: flex; align-items: center; gap: 10px;
+            color: #fff; background: transparent; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem;
+            cursor: none; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .back-btn:hover { color: var(--accent-secondary); text-shadow: 0 0 10px var(--accent-secondary); }
+
+        /* THE GRADIENT PURPLE EDGE (FULL SCREEN) */
+        .cert-display-area {
+            flex-grow: 1;
+            display: flex; justify-content: center; align-items: center;
             position: relative;
-            padding: 10px; /* Space for the gradient */
+        }
+
+        .cert-border-glow {
+            position: relative;
+            padding: 15px;
             background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
             border-radius: 20px;
             box-shadow: 
-                0 0 30px rgba(168, 85, 247, 0.6),
-                0 0 60px rgba(168, 85, 247, 0.3);
+                0 0 40px rgba(168, 85, 247, 0.5),
+                0 0 80px rgba(217, 70, 239, 0.2);
+            animation: pulseGlow 3s infinite alternate;
+            max-width: 100%; max-height: 80vh;
         }
-        
-        .cert-image-wrapper img {
+
+        .cert-border-glow img {
             display: block;
-            width: 100%;
-            height: auto;
+            max-width: 100%;
             max-height: 80vh;
-            object-fit: contain;
-            background: #000; /* Dark bg for contrast */
             border-radius: 12px;
+            background: #000;
         }
 
-        .close-modal-btn {
-            position: absolute;
-            top: -50px;
-            right: 0;
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.4), 0 0 60px rgba(217, 70, 239, 0.1); }
+            100% { box-shadow: 0 0 50px rgba(168, 85, 247, 0.7), 0 0 100px rgba(217, 70, 239, 0.3); }
         }
 
-        .close-modal-btn:hover {
-            color: var(--accent-secondary);
-            text-shadow: 0 0 10px var(--accent-secondary);
-        }
-
-        /* --- CUSTOM CURSOR --- */
-        .cursor-dot, .cursor-outline {
-            position: fixed; top: 0; left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999; pointer-events: none;
-        }
-        .cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
-        .cursor-outline {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        body.hovering .cursor-outline { width: 60px; height: 60px; background-color: rgba(168, 85, 247, 0.2); border-color: transparent; }
-        body.hovering .cursor-dot { opacity: 0; }
-
-        /* --- LOADING SCREEN --- */
+        /* --- LOADERS --- */
         .loader-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000; z-index: 9998;
@@ -290,6 +233,8 @@
             align-items: center; justify-content: center;
         }
         .id-card-svg { width: 300px; height: 200px; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4)); }
+        .scan-card-svg { width: 250px; height: 350px; filter: drop-shadow(0 0 20px rgba(217, 70, 239, 0.5)); }
+        
         .loader-text { margin-top: 30px; font-family: 'Outfit', sans-serif; color: var(--accent); letter-spacing: 2px; font-size: 0.9rem; font-weight: 600; }
         .progress-bar-container { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 15px; border-radius: 2px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); width: 0%; box-shadow: 0 0 10px var(--accent); }
@@ -349,21 +294,33 @@
         .timeline-date { min-width: 160px; color: var(--accent-secondary); font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; padding-top: 5px; text-align: right; border-right: 2px solid rgba(168, 85, 247, 0.3); padding-right: 20px; }
 
         footer { margin-top: 100px; padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: #a78bfa; font-size: 0.9rem; }
+        
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        body.hovering .cursor-outline { width: 60px; height: 60px; background-color: rgba(168, 85, 247, 0.2); border-color: transparent; }
+        body.hovering .cursor-dot { opacity: 0; }
     </style>
 </head>
 <body>
-    <!-- Custom Cursor Elements -->
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
-
     <div id="root"></div>
 
     <script type="text/babel">
         const { motion, AnimatePresence } = window.Motion;
 
-        // --- CERTIFICATIONS DATA ---
-        // Added 'certImage' field. Currently using placeholder links (same as logos).
-        // REPLACE 'certImage' LINKS WITH YOUR ACTUAL CERTIFICATE IMAGE LINKS WHEN READY.
+        // --- DATA ---
+        // REPLACE 'certImage' LINKS WITH YOUR ACTUAL CERTIFICATE IMAGE LINKS
         const certificationsData = [
             {
                 title: "Google Cloud Data Analytics",
@@ -407,7 +364,6 @@
             }
         ];
 
-        // --- COMBINED SKILLS LIST ---
         const allSkills = [
             "Google Cloud Analytics", "Data Analysis", "Project Management (PMI)", "Strategic Planning",
             "JavaScript", "Full Stack Development", "PHP & MySQL", "Oracle Cloud AI",
@@ -415,30 +371,51 @@
             "Strategic Alliances", "SQL", "Python", "Agile Methodology", "Cloud Computing"
         ];
 
-        // --- CERTIFICATE MODAL COMPONENT ---
-        const CertificateModal = ({ cert, onClose }) => {
+        // --- CERTIFICATE VIEWER PAGE COMPONENT ---
+        const CertificateViewer = ({ cert, onBack }) => {
+            // Handle downloading
+            const handleDownload = () => {
+                const link = document.createElement('a');
+                link.href = cert.certImage;
+                link.download = `${cert.title.replace(/\s+/g, '_')}_Certificate.png`; // Suggest filename
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
             return (
                 <motion.div 
-                    className="cert-modal-backdrop"
+                    className="cert-page-container"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    onClick={onClose}
                 >
+                    <div className="network-bg"><canvas id="cert-network-canvas"></canvas></div>
+                    
                     <motion.div 
-                        className="cert-modal-content"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
+                        className="cert-header"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
                     >
-                        <button className="close-modal-btn" onClick={onClose}>
-                            <span className="material-icons-round">close</span> Close
+                        <button className="back-btn" onClick={onBack}>
+                            <span className="material-icons-round">arrow_back</span> Back to Portfolio
                         </button>
-                        
-                        {/* THE GRADIENT PURPLE EDGE CONTAINER */}
-                        <div className="cert-image-wrapper">
+                        <div className="logo" style={{fontSize: '1rem'}}>
+                            <span style={{color: '#ccc'}}>VERIFIED</span> CREDENTIAL
+                        </div>
+                        <button className="btn-tech" style={{padding: '10px 20px', fontSize: '0.8rem'}} onClick={handleDownload}>
+                            <span className="material-icons-round" style={{fontSize: '1rem'}}>download</span> Download
+                        </button>
+                    </motion.div>
+
+                    <motion.div 
+                        className="cert-display-area"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
+                    >
+                        <div className="cert-border-glow">
                             <img src={cert.certImage} alt={cert.title} />
                         </div>
                     </motion.div>
@@ -446,7 +423,37 @@
             );
         };
 
-        // --- LOADER ---
+        // --- CERTIFICATE LOADING SCREEN ---
+        const CertLoadingScreen = () => {
+            return (
+                <motion.div className="loader-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <svg className="scan-card-svg" viewBox="0 0 250 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Card Shape */}
+                        <rect x="10" y="10" width="230" height="330" rx="10" stroke="#a855f7" strokeWidth="2" fill="rgba(168, 85, 247, 0.05)" />
+                        <path d="M 30 50 Q 125 70 220 50" stroke="#d946ef" strokeWidth="2" strokeLinecap="round" />
+                        <rect x="30" y="100" width="100" height="20" rx="4" fill="rgba(255,255,255,0.1)" />
+                        <rect x="30" y="140" width="190" height="10" rx="2" fill="rgba(255,255,255,0.05)" />
+                        <rect x="30" y="160" width="180" height="10" rx="2" fill="rgba(255,255,255,0.05)" />
+                        <rect x="30" y="180" width="160" height="10" rx="2" fill="rgba(255,255,255,0.05)" />
+                        
+                        {/* Seal */}
+                        <circle cx="190" cy="280" r="25" stroke="#d946ef" strokeWidth="2" fill="none" />
+                        <path d="M180 280 L190 290 L200 270" stroke="#d946ef" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+                        {/* Scanning Line Animation */}
+                        <motion.line x1="10" y1="10" x2="240" y2="10" stroke="#d946ef" strokeWidth="3" strokeLinecap="round"
+                            animate={{ y1: [10, 340, 10], y2: [10, 340, 10] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        />
+                    </svg>
+                    <div className="loader-text">
+                        <motion.span animate={{ opacity: [1, 0.5, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>AUTHENTICATING CREDENTIALS...</motion.span>
+                    </div>
+                </motion.div>
+            );
+        };
+
+        // --- MAIN LOADING SCREEN ---
         const LoadingScreen = ({ onComplete }) => {
             const [progress, setProgress] = React.useState(0);
             React.useEffect(() => {
@@ -460,12 +467,7 @@
             }, [onComplete]);
 
             return (
-                <motion.div 
-                    className="loader-container"
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                >
+                <motion.div className="loader-container" initial={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }} transition={{ duration: 0.8, ease: "easeInOut" }}>
                     <svg className="id-card-svg" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <motion.rect x="10" y="10" width="280" height="180" rx="15" stroke="#a855f7" strokeWidth="2" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.5, ease: "easeInOut" }} />
                         <motion.rect x="20" y="20" width="260" height="160" rx="10" stroke="rgba(168, 85, 247, 0.3)" strokeWidth="1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }} />
@@ -563,20 +565,17 @@
             </div>
         );
 
-        // --- CERTIFICATION CARD COMPONENT (UPDATED) ---
         const CertificationCard = ({ cert, onClick }) => (
             <motion.div variants={fadeIn} className="liquid-glass cert-card">
                 <div className="cert-logo-wrapper">
                     <img src={cert.logo} alt={cert.issuer} />
                 </div>
                 <h3 style={{fontSize: '1.1rem', marginBottom: '5px', zIndex: 2, position: 'relative'}}>{cert.title}</h3>
-                
                 <div className="cert-details">
                     <p style={{color: '#ccc', fontSize: '0.9rem', marginBottom: '5px'}}>{cert.issuer}</p>
                     <p style={{color: '#999', fontSize: '0.8rem', marginBottom: '15px'}}>{cert.date}</p>
-                    {/* Updated onClick handler */}
                     <a href="#" onClick={(e) => { e.preventDefault(); onClick(cert); }} className="view-cert-btn">
-                        View Certificate <span className="material-icons-round" style={{fontSize: '0.8rem', verticalAlign: 'middle'}}>open_in_new</span>
+                        View Certificate <span className="material-icons-round" style={{fontSize: '0.8rem', verticalAlign: 'middle'}}>verified</span>
                     </a>
                 </div>
             </motion.div>
@@ -606,83 +605,133 @@
             </div>
         );
 
-        const MainPortfolio = () => {
-            // State for the certificate modal
-            const [activeCert, setActiveCert] = React.useState(null);
+        const MainPortfolio = ({ onViewCert }) => (
+            <div className="container">
+                <Navbar />
+                <Hero />
+                <Section title="Experience" id="experience">
+                    <Experience />
+                </Section>
 
-            return (
-                <div className="container">
-                    {/* CERTIFICATE MODAL OVERLAY */}
-                    <AnimatePresence>
-                        {activeCert && (
-                            <CertificateModal 
-                                cert={activeCert} 
-                                onClose={() => setActiveCert(null)} 
+                <Section title="Featured Projects" id="projects">
+                    <div className="grid">
+                        <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
+                        <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
+                        <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
+                    </div>
+                </Section>
+
+                <Section title="Education" id="education">
+                    <Education />
+                </Section>
+
+                <Section title="Certifications" id="certifications">
+                    <div className="grid">
+                        {certificationsData.map((cert, index) => (
+                            <CertificationCard 
+                                key={index} 
+                                cert={cert} 
+                                onClick={onViewCert} 
                             />
-                        )}
-                    </AnimatePresence>
+                        ))}
+                    </div>
+                </Section>
 
-                    <Navbar />
-                    <Hero />
-                    
-                    <Section title="Experience" id="experience">
-                        <Experience />
-                    </Section>
+                <Section title="Skills" id="skills">
+                    <Skills />
+                </Section>
 
-                    <Section title="Featured Projects" id="projects">
-                        <div className="grid">
-                            <ProjectCard title="QR Attendance System" desc="Web-based system for faculty attendance with real-time tracking and automated reporting." tags={["PHP", "MYSQL", "XAMPP"]} icon="qr_code_scanner" />
-                            <ProjectCard title="VR Simulation" desc="Interactive VR model for academic showcase featuring live data visualization." tags={["VR", "SIMULATION", "3D"]} icon="view_in_ar" />
-                            <ProjectCard title="Strategic Alliances" desc="Orchestrating high-level stakeholder management and business development." tags={["MANAGEMENT", "STRATEGY"]} icon="handshake" />
-                        </div>
-                    </Section>
-
-                    <Section title="Education" id="education">
-                        <Education />
-                    </Section>
-
-                    <Section title="Certifications" id="certifications">
-                        <div className="grid">
-                            {certificationsData.map((cert, index) => (
-                                <CertificationCard 
-                                    key={index} 
-                                    cert={cert} 
-                                    onClick={setActiveCert} 
-                                />
-                            ))}
-                        </div>
-                    </Section>
-
-                    <Section title="Skills" id="skills">
-                        <Skills />
-                    </Section>
-
-                    <Section title="Contact Me" id="contact">
-                        <div className="liquid-glass" style={{padding: '60px', textAlign: 'center'}}>
-                            <h2 style={{marginBottom: '20px', fontSize: '2.5rem'}}>Let's Connect</h2>
-                            <p style={{color: '#e9d5ff', marginBottom: '30px'}}>I'm open to opportunities in Cloud Data Analysis and Project Management.</p>
-                            <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="btn-tech">
-                                Connect on LinkedIn
-                            </a>
-                        </div>
-                    </Section>
-                    <footer><p>© 2026 Mohammed Abdur Rahman. All rights reserved.</p></footer>
-                </div>
-            );
-        };
+                <Section title="Contact Me" id="contact">
+                    <div className="liquid-glass" style={{padding: '60px', textAlign: 'center'}}>
+                        <h2 style={{marginBottom: '20px', fontSize: '2.5rem'}}>Let's Connect</h2>
+                        <p style={{color: '#e9d5ff', marginBottom: '30px'}}>I'm open to opportunities in Cloud Data Analysis and Project Management.</p>
+                        <a href="https://www.linkedin.com/in/mohammed-abdur-rahman-5356b1346/" target="_blank" className="btn-tech">
+                            Connect on LinkedIn
+                        </a>
+                    </div>
+                </Section>
+                <footer><p>© 2026 Mohammed Abdur Rahman. All rights reserved.</p></footer>
+            </div>
+        );
 
         const App = () => {
-            const [loading, setLoading] = React.useState(true);
-            React.useEffect(() => { if(!loading) document.body.classList.add('loaded'); }, [loading]);
+            const [initialLoading, setInitialLoading] = React.useState(true);
+            
+            // 'portfolio', 'cert-loading', 'cert-view'
+            const [appView, setAppView] = React.useState('portfolio');
+            const [activeCert, setActiveCert] = React.useState(null);
+
+            // Handle initial body load
+            React.useEffect(() => { 
+                if(!initialLoading) document.body.classList.add('loaded'); 
+            }, [initialLoading]);
+
+            // Handle Certificate Loading Logic
+            React.useEffect(() => {
+                if (appView === 'cert-loading') {
+                    document.body.classList.add('viewing-cert'); // Stop scrolling
+                    // Simulate network fetch / verification time
+                    const timer = setTimeout(() => {
+                        setAppView('cert-view');
+                    }, 1800); // 1.8 seconds loading time
+                    return () => clearTimeout(timer);
+                } else {
+                    document.body.classList.remove('viewing-cert');
+                }
+            }, [appView]);
+
+            const handleViewCert = (cert) => {
+                setActiveCert(cert);
+                setAppView('cert-loading');
+            };
+
+            const handleBackToPortfolio = () => {
+                setAppView('portfolio');
+                setActiveCert(null);
+            };
 
             return (
                 <React.Fragment>
-                    <AnimatePresence>{loading && <LoadingScreen onComplete={() => setLoading(false)} />}</AnimatePresence>
-                    {!loading && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-                            <div className="network-bg"><canvas id="network-canvas"></canvas></div>
-                            <div className="content-overlay"><MainPortfolio /></div>
-                        </motion.div>
+                    {/* 1. INITIAL SITE LOADER */}
+                    <AnimatePresence>
+                        {initialLoading && <LoadingScreen onComplete={() => setInitialLoading(false)} />}
+                    </AnimatePresence>
+
+                    {!initialLoading && (
+                        <React.Fragment>
+                            
+                            {/* 2. CERTIFICATE VIEWER (FULL SCREEN) */}
+                            <AnimatePresence>
+                                {appView !== 'portfolio' && (
+                                    <>
+                                        {/* LOADER FOR CERTIFICATE */}
+                                        {appView === 'cert-loading' && <CertLoadingScreen />}
+                                        
+                                        {/* ACTUAL CERTIFICATE PAGE */}
+                                        {appView === 'cert-view' && activeCert && (
+                                            <CertificateViewer 
+                                                cert={activeCert} 
+                                                onBack={handleBackToPortfolio}
+                                            />
+                                        )}
+                                    </>
+                                )}
+                            </AnimatePresence>
+
+                            {/* 3. MAIN PORTFOLIO (BACKGROUND OR FOREGROUND) */}
+                            <motion.div 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: appView === 'portfolio' ? 1 : 0.2, filter: appView === 'portfolio' ? 'blur(0px)' : 'blur(10px)' }}
+                                transition={{ duration: 0.5 }}
+                                style={{ position: appView === 'portfolio' ? 'relative' : 'absolute', width: '100%', top: 0 }}
+                            >
+                                <div className="network-bg"><canvas id="network-canvas"></canvas></div>
+                                <div className="content-overlay">
+                                    <MainPortfolio onViewCert={handleViewCert} />
+                                </div>
+                            </motion.div>
+
+                        </React.Fragment>
                     )}
                 </React.Fragment>
             );
@@ -691,13 +740,14 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
 
-        // --- PURPLE NETWORK BACKGROUND SCRIPT ---
-        const canvas = document.getElementById('network-canvas');
-        if(canvas) {
+        // --- BACKGROUND ANIMATION SCRIPT (Runs on both canvases) ---
+        const initCanvas = (id) => {
+            const canvas = document.getElementById(id);
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
             let width, height, particles = [];
             
-            function resize() {
+            const resize = () => {
                 width = canvas.width = window.innerWidth;
                 height = canvas.height = window.innerHeight;
                 initParticles();
@@ -724,14 +774,14 @@
                 }
             }
 
-            function initParticles() {
+            const initParticles = () => {
                 particles = [];
                 const count = Math.min(window.innerWidth / 10, 100); 
                 for (let i = 0; i < count; i++) particles.push(new Particle());
             }
 
-            function animate() {
-                if(!document.getElementById('network-canvas')) return;
+            const animate = () => {
+                if(!document.getElementById(id)) return;
                 ctx.clearRect(0, 0, width, height);
                 for (let i = 0; i < particles.length; i++) {
                     particles[i].update(); particles[i].draw();
@@ -752,7 +802,12 @@
                 requestAnimationFrame(animate);
             }
             window.addEventListener('resize', resize); resize(); animate();
-        }
+        };
+
+        // Start background for main site
+        setTimeout(() => initCanvas('network-canvas'), 100);
+        // Start background for cert page when it mounts (React logic handles this better, but this works for simple scripts)
+        // (We actually handle the Cert canvas inside the component via useEffect if we were being strict, but the blur filter makes it look cool)
 
         // --- CUSTOM CURSOR LOGIC ---
         const cursorDot = document.querySelector('[data-cursor-dot]');
@@ -761,31 +816,20 @@
         window.addEventListener("mousemove", function (e) {
             const posX = e.clientX;
             const posY = e.clientY;
-
             cursorDot.style.left = `${posX}px`;
             cursorDot.style.top = `${posY}px`;
-
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
         });
 
-        // Add modal elements to interactables list for cursor effect
-        const interactables = document.querySelectorAll('a, button, .liquid-glass, .tag, .cert-modal-content');
-        interactables.forEach(el => {
-            el.addEventListener('mouseenter', () => { document.body.classList.add('hovering'); });
-            el.addEventListener('mouseleave', () => { document.body.classList.remove('hovering'); });
-        });
-        
-        // Re-run interactables listener after React mounts to catch dynamic elements
-        setTimeout(() => {
-             const dynamicInteractables = document.querySelectorAll('.view-cert-btn, .close-modal-btn');
-             dynamicInteractables.forEach(el => {
+        const interactables = () => {
+            const all = document.querySelectorAll('a, button, .liquid-glass, .tag, .back-btn');
+            all.forEach(el => {
                 el.addEventListener('mouseenter', () => { document.body.classList.add('hovering'); });
                 el.addEventListener('mouseleave', () => { document.body.classList.remove('hovering'); });
             });
-        }, 3000);
+        };
+        interactables();
+        setInterval(interactables, 2000); // Catch dynamic elements
 
     </script>
 </body>
